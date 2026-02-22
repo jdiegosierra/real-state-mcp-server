@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: realestate
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build: .
+    command: ["node", "dist/src/migrate.js"]
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/realestate?schema=public
+      DIRECT_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/realestate?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/realestate?schema=public
+      DIRECT_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/realestate?schema=public
+      PORT: "3000"
+      LOG_LEVEL: info
+      API_KEY: change-me-in-production
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:

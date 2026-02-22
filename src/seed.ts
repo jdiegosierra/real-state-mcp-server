@@ -1,0 +1,215 @@
+import { PrismaClient, PropertyType, PropertyStatus } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+const properties = [
+  {
+    title: "Modern Downtown Apartment",
+    description:
+      "Stunning 2BR apartment with floor-to-ceiling windows and city views.",
+    address: "123 Main St, Apt 15B",
+    city: "Austin",
+    state: "TX",
+    zipCode: "73301",
+    country: "US",
+    price: 425000,
+    bedrooms: 2,
+    bathrooms: 2,
+    squareFeet: 1100,
+    propertyType: PropertyType.APARTMENT,
+    status: PropertyStatus.AVAILABLE,
+    yearBuilt: 2021,
+    lotSize: null,
+    features: ["Central AC", "In-unit laundry", "Rooftop pool", "Concierge"],
+    internalNotes: "Owner motivated to sell. Price negotiable.",
+  },
+  {
+    title: "Spacious Family Home",
+    description:
+      "Beautiful 4BR home with large backyard, updated kitchen, and two-car garage.",
+    address: "456 Oak Lane",
+    city: "Austin",
+    state: "TX",
+    zipCode: "73301",
+    country: "US",
+    price: 685000,
+    bedrooms: 4,
+    bathrooms: 3,
+    squareFeet: 2800,
+    propertyType: PropertyType.HOUSE,
+    status: PropertyStatus.AVAILABLE,
+    yearBuilt: 2015,
+    lotSize: 0.35,
+    features: [
+      "Two-car garage",
+      "Updated kitchen",
+      "Hardwood floors",
+      "Fenced backyard",
+    ],
+    internalNotes: null,
+  },
+  {
+    title: "Luxury Waterfront Condo",
+    description:
+      "Premium condo with marina views, pool, and concierge service.",
+    address: "789 Harbor Blvd, Unit 42",
+    city: "Miami",
+    state: "FL",
+    zipCode: "33101",
+    country: "US",
+    price: 1250000,
+    bedrooms: 3,
+    bathrooms: 3,
+    squareFeet: 2200,
+    propertyType: PropertyType.CONDO,
+    status: PropertyStatus.AVAILABLE,
+    yearBuilt: 2019,
+    lotSize: null,
+    features: [
+      "Waterfront",
+      "Private balcony",
+      "Heated pool",
+      "Valet parking",
+      "Gym",
+    ],
+    internalNotes: "HOA fee $850/mo. Marina slip available separately.",
+  },
+  {
+    title: "Charming Townhouse",
+    description:
+      "Renovated townhouse in historic district with private patio.",
+    address: "321 Elm Street",
+    city: "Denver",
+    state: "CO",
+    zipCode: "80201",
+    country: "US",
+    price: 520000,
+    bedrooms: 3,
+    bathrooms: 2,
+    squareFeet: 1800,
+    propertyType: PropertyType.TOWNHOUSE,
+    status: PropertyStatus.AVAILABLE,
+    yearBuilt: 1985,
+    lotSize: 0.1,
+    features: [
+      "Private patio",
+      "Exposed brick",
+      "Renovated kitchen",
+      "Walk to shops",
+    ],
+    internalNotes: "Recently renovated 2023. New plumbing and electrical.",
+  },
+  {
+    title: "Commercial Office Space",
+    description:
+      "Prime commercial space in business district. Open floor plan, high ceilings.",
+    address: "100 Commerce Dr, Suite 200",
+    city: "Austin",
+    state: "TX",
+    zipCode: "73301",
+    country: "US",
+    price: 890000,
+    bedrooms: null,
+    bathrooms: 2,
+    squareFeet: 3500,
+    propertyType: PropertyType.COMMERCIAL,
+    status: PropertyStatus.AVAILABLE,
+    yearBuilt: 2010,
+    lotSize: null,
+    features: [
+      "Open floor plan",
+      "High ceilings",
+      "Fiber internet",
+      "Parking garage",
+    ],
+    internalNotes: "Zoned C-2. Current tenant lease expires March 2027.",
+  },
+  {
+    title: "Vacant Residential Lot",
+    description:
+      "Build your dream home on this beautiful half-acre lot with mountain views.",
+    address: "Lot 7, Pine Ridge Rd",
+    city: "Denver",
+    state: "CO",
+    zipCode: "80201",
+    country: "US",
+    price: 195000,
+    bedrooms: null,
+    bathrooms: null,
+    squareFeet: null,
+    propertyType: PropertyType.LAND,
+    status: PropertyStatus.AVAILABLE,
+    yearBuilt: null,
+    lotSize: 0.5,
+    features: ["Mountain views", "Utilities at street", "Paved road access"],
+    internalNotes: null,
+  },
+  {
+    title: "Cozy Starter Home",
+    description: "Perfect starter home with new roof and HVAC system.",
+    address: "55 Birch Ave",
+    city: "Miami",
+    state: "FL",
+    zipCode: "33101",
+    country: "US",
+    price: 310000,
+    bedrooms: 2,
+    bathrooms: 1,
+    squareFeet: 950,
+    propertyType: PropertyType.HOUSE,
+    status: PropertyStatus.SOLD,
+    yearBuilt: 1972,
+    lotSize: 0.2,
+    features: ["New roof 2024", "New HVAC", "Corner lot"],
+    internalNotes: "Sold above asking. Closed Jan 2026.",
+  },
+  {
+    title: "Grand Estate Property",
+    description:
+      "Grand estate with pool, guest house, and 5-acre grounds.",
+    address: "1 Magnolia Estate",
+    city: "Austin",
+    state: "TX",
+    zipCode: "73301",
+    country: "US",
+    price: 2500000,
+    bedrooms: 6,
+    bathrooms: 5,
+    squareFeet: 6500,
+    propertyType: PropertyType.HOUSE,
+    status: PropertyStatus.SOLD,
+    yearBuilt: 2005,
+    lotSize: 5.0,
+    features: [
+      "Pool",
+      "Guest house",
+      "Wine cellar",
+      "Smart home",
+      "3-car garage",
+    ],
+    internalNotes: "Sold to cash buyer. Record price for the neighborhood.",
+  },
+];
+
+async function main(): Promise<void> {
+  const count = await prisma.property.count();
+  if (count > 0) {
+    console.log(`Database already has ${count} properties, skipping seed.`);
+    return;
+  }
+
+  console.log("Seeding database...");
+  for (const p of properties) {
+    await prisma.property.create({ data: p });
+  }
+  console.log(`Seeded ${properties.length} properties.`);
+}
+
+main()
+  .catch((e) => {
+    console.error("Seed failed:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
